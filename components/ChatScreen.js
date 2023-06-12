@@ -127,9 +127,10 @@ const ChatScreen = ({ chat, messages }) => {
             );
           })
         ) : (
-          JSON.parse(messages).map((e) => {
+          JSON.parse(messages).map((e, i) => {
             return (
               <div
+                key={i}
                 className={`${
                   e.user === user.email ? "items-end" : ""
                 } flex relative w-full flex-col mt-2`}
