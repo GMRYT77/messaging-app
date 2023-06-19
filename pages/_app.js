@@ -20,6 +20,7 @@ export default function App({ Component, pageProps }) {
           photoURL: user.photoURL,
           uid: user.uid,
           lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+          desc: "No Description",
         },
         {
           merge: true,

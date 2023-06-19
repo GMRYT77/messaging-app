@@ -1,5 +1,6 @@
 import ChatScreen from "@/components/ChatScreen";
 import Navbar from "@/components/Navbar";
+import RecipientInfo from "@/components/RecipientInfo";
 import Sidebar from "@/components/Sidebar";
 import { auth, db } from "@/firebase";
 import getRecipientEmail from "@/utils/getRecipientEmail";
@@ -18,12 +19,13 @@ const ChatTab = ({ chat, messages }) => {
       <Navbar />
       <Sidebar />
       <ChatScreen chat={chat} messages={messages} />
+      <RecipientInfo chat={chat} />
     </main>
   );
 };
 
 export async function getServerSideProps(context) {
-  const ref = db.collection("chats").doc(context.query.chatTab);
+  const ref = db.collection("chats").doc(context.query.id);
   //Prep the MSG
   const messageRes = await ref
     .collection("messages")

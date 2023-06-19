@@ -8,14 +8,10 @@ const Message = ({ message, user }) => {
   const [userLoggedIn] = useAuthState(auth);
 
   const TypeOfMsg = user === userLoggedIn?.email;
-  // useEffect(() => {
-  //   // console.log(message);
-  //   // console.log(new Date(message?.timestamp?.seconds * 1000));
-  // });
+
   function checkDateisValid(date) {
     return date instanceof Date && !isNaN(date);
   }
-  // console.log(checkDateisValid(new Date(message?.timestamp?.seconds * 1000)));
 
   return (
     <div
@@ -26,7 +22,7 @@ const Message = ({ message, user }) => {
       <div
         className={`${
           TypeOfMsg ? "bg-blue-500  text-right" : "bg-green-500"
-        } flex max-w-[80%] w-fit p-2 rounded-md text-white text-lg outfit flex-col`}
+        } max-w-[80%] w-fit py-2 px-3 rounded-md text-white text-lg roboto tracking-wide flex-col text-left`}
       >
         {message.message}
       </div>

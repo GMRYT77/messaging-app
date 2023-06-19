@@ -5,7 +5,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
 import Message from "./Message";
-import { MdOutlineEmojiEmotions } from "react-icons/md";
+import {
+  MdKeyboardArrowDown,
+  MdCall,
+  MdOutlineEmojiEmotions,
+  MdVideoCall,
+} from "react-icons/md";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 import getRecipientEmail from "@/utils/getRecipientEmail";
@@ -18,16 +23,13 @@ const ChatScreen = ({ chat, messages }) => {
   const [user] = useAuthState(auth);
   const router = useRouter();
   const endMsgRef = useRef(null);
-
+  console.log(chat, JSON.parse(messages));
   const recipientEmail = getRecipientEmail(chat.users, user);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [router]);
   const [messageSnapshot, loading] = useCollection(
     db
       .collection("chats")
-      .doc(router.query.chatTab)
+      .doc(router.query.id)
       .collection("messages")
       .orderBy("timestamp", "asc")
   );
@@ -46,15 +48,12 @@ const ChatScreen = ({ chat, messages }) => {
       { merge: true }
     );
 
-    db.collection("chats")
-      .doc(router.query.chatTab)
-      .collection("messages")
-      .add({
-        user: user.email,
-        message: input,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        photoURL: user.photoURL,
-      });
+    db.collection("chats").doc(router.query.id).collection("messages").add({
+      user: user.email,
+      message: input,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      photoURL: user.photoURL,
+    });
 
     setInput("");
     scrollToBottom();
@@ -67,22 +66,16 @@ const ChatScreen = ({ chat, messages }) => {
     });
   };
 
-  function scrollToTargetAdjusted() {
-    var element = document.getElementById("REF");
-    var bottomOffset = 60;
-    var elementPosition = element.getBoundingClientRect().bottom;
-    var offsetPosition = elementPosition + window.pageYOffset - bottomOffset;
-
-    endMsgRef.scrollTo({
-      bottom: offsetPosition,
-      behavior: "smooth",
-    });
-  }
+  const showRecipientInfoTab = () => {
+    const RCTab = document.getElementById("RECIPIENT_INFO_TAB");
+    RCTab.classList.remove("hidden");
+    RCTab.classList.add("flex");
+  };
 
   const recipient = recipientSnapshot?.docs?.[0]?.data();
 
   return (
-    <div className="relative flex flex-col w-full max-h-[100dvh]">
+    <div className="relative flex flex-col w-full max-h-[100dvh] bg-blue-200/20">
       <div
         id="CHAT_BAR"
         className="relative flex w-full max-h-[60px] h-full justify-between bg-white px-4 py-2 z-[130] shadow-[#a1a1a1]/60 shadow-b-sm"
@@ -112,10 +105,21 @@ const ChatScreen = ({ chat, messages }) => {
             </span>
           </div>
         </div>
+        <div className="w-fit flex py-1 items-center gap-1 text-[#333]/80">
+          <span className="text-2xl px-3 py-2 hover:bg-neutral-300/40 cursor-pointer">
+            <MdCall />
+          </span>
+          <span
+            onClick={showRecipientInfoTab}
+            className="text-2xl px-3 py-2 hover:bg-neutral-300/40 cursor-pointer"
+          >
+            <MdKeyboardArrowDown />
+          </span>
+        </div>
       </div>
-      <div className="relative  flex-1 flex-col overflow-auto scroll-hidden px-6 py-3 gap-4">
-        {loading ? (
-          <div></div>
+      <div className="relative  flex-1 flex-col overflow-auto scroll-hidden px-6 py-3 gap-4 z-30">
+        {messageSnapshot?.docs?.length === 0 ? (
+          <div className="">No chat</div>
         ) : messageSnapshot ? (
           messageSnapshot.docs.map((message) => {
             return (
@@ -155,7 +159,7 @@ const ChatScreen = ({ chat, messages }) => {
       </div>
       <form
         i="CHAT_MSG"
-        className="relative max-h-[68px] h-full  w-full flex py-3 px-4 gap-4 bg-white z-[100] items-center drop-shadow-lg"
+        className="relative max-h-[68px] h-full  w-full flex py-3 px-4 gap-4 bg-white z-[100] items-center"
       >
         <MdOutlineEmojiEmotions className="text-xl cursor-pointer" />
         <input
@@ -177,6 +181,14 @@ const ChatScreen = ({ chat, messages }) => {
           Submit
         </button>
       </form>
+      {/* <div className="absolute top-0 left-0 overflow-hidden w-full h-full z-10 opacity-60">
+        <Image
+          src="/low-poly-grid-haikei.svg"
+          layout="fill"
+          objectFit="cover"
+          alt=""
+        />
+      </div> */}
     </div>
   );
 };

@@ -1,9 +1,14 @@
+import LoadingBar from "@/components/LoadingBar";
+import Head from "next/head";
 import Image from "next/image";
 import { TailSpin } from "react-loader-spinner";
 
 function Loading() {
   return (
     <div className="w-[100dvw] h-[100dvh] flex justify-center items-center ">
+      <Head>
+        <title>ChatApp</title>
+      </Head>
       <div className="flex flex-col relative w-full max-w-sm aspect-auto p-6 drop-shadow rounded-md items-center">
         <div className="relative w-[20%] aspect-square mx-auto mb-12">
           <Image
@@ -13,7 +18,7 @@ function Loading() {
             alt="Favicon"
           />
         </div>
-        <TailSpin
+        {/* <TailSpin
           height="50"
           width="50"
           color="#6000ff"
@@ -22,7 +27,8 @@ function Loading() {
           wrapperStyle={{}}
           wrapperClass=""
           visible={true}
-        />
+        /> */}
+        <LoadingBar />
       </div>
     </div>
   );
